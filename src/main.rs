@@ -70,7 +70,7 @@ impl Clock {
 }
 fn main() {
     let app = App::new("clock")
-        .version("0.1.1")
+        .version("0.1.2")
         .about("Something to check time")
         .arg(
             Arg::with_name("action")
@@ -97,7 +97,19 @@ fn main() {
     let std = args.value_of("std").unwrap();
 
     if action == "set" {
-        unimplemented!()
+        let t_ = args.value_of("datetime").unwrap();
+
+        let parser = match std {
+            "rfc2822" => DateTime::parse_from_rfc2822,
+            "rfc3339" => DateTime::parse_from_rfc3339,
+            _ => unimplemented!(),
+        };
+
+        let error_message = format!("Unable to parse {} as {}", t_, std);
+
+        let t = parser(t_).expect(&error_message);
+
+        Clock::set(t)
     }
 
     let now = Clock::get();
