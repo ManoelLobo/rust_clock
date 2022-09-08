@@ -109,7 +109,17 @@ fn main() {
 
         let t = parser(t_).expect(&error_message);
 
-        Clock::set(t)
+        Clock::set(t);
+
+        // error handling through OS error code
+        let possible_error = std::io::Error::last_os_error();
+        let os_error_code = &possible_error.raw_os_error();
+
+        match os_error_code {
+            Some(0) => (), // CHEAT: We should not rely on int and instead use an enum - but this is a quick hack for learning purposes
+            Some(_) => eprintln!("Unable to set time: {:?}", possible_error),
+            None => (),
+        }
     }
 
     let now = Clock::get();
